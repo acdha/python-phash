@@ -83,7 +83,7 @@ def dct_imagehash(filename):
 
     result = ph_dct_imagehash(filename_bytes, byref(h))
     if result != -1:
-        return h
+        return h.value
     else:
         return None
 
@@ -93,7 +93,7 @@ ph_hamming_distance.argtypes = [ctypes.c_ulonglong, ctypes.c_ulonglong]
 
 def hamming_distance(hash1, hash2):
     return ph_hamming_distance(hash1, hash2)
-    
+
 def image_digest(filename, sigma=1.0, gamma=1.0, lines=180):
     """
     Use values sigma=1.0 and gamma=1.0 for now. N indicates the number of lines to project through the center for
