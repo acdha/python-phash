@@ -49,7 +49,7 @@ DIGEST_P = ctypes.POINTER(Digest)
 
 ph_dct_imagehash = libphash.ph_dct_imagehash
 ph_dct_imagehash.restype = ctypes.c_int
-ph_dct_imagehash.argtypes = [ctypes.c_char_p, ctypes.c_ulong]
+ph_dct_imagehash.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_ulonglong)]
 
 ph_dct_videohash = libphash.ph_dct_videohash
 ph_dct_videohash.restype = ctypes.POINTER(ctypes.c_ulonglong)
@@ -73,6 +73,26 @@ ph_image_digest.err_check = _phash_errcheck
 ph_image_digest.restype = ctypes.c_int
 ph_image_digest.argtypes = [ctypes.c_char_p, ctypes.c_double, ctypes.c_double, DIGEST_P, ctypes.c_int]
 
+def dct_imagehash(filename):
+    if isinstance(filename, bytes):
+        filename_bytes = filename
+    else:
+        filename_bytes = filename.encode(FS_ENCODING)
+
+    h = ctypes.c_ulonglong()
+
+    result = ph_dct_imagehash(filename_bytes, byref(h))
+    if result != -1:
+        return h.value
+    else:
+        return None
+
+ph_hamming_distance = libphash.ph_hamming_distance
+ph_hamming_distance.restype = ctypes.c_int
+ph_hamming_distance.argtypes = [ctypes.c_ulonglong, ctypes.c_ulonglong]
+
+def hamming_distance(hash1, hash2):
+    return ph_hamming_distance(hash1, hash2)
 
 def image_digest(filename, sigma=1.0, gamma=1.0, lines=180):
     """
