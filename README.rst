@@ -4,7 +4,7 @@ Python Boilerplate
 
 .. image:: https://badge.fury.io/py/phash.png
     :target: http://badge.fury.io/py/phash
-    
+
 .. image:: https://travis-ci.org/acdha/phash.png?branch=master
         :target: https://travis-ci.org/acdha/phash
 
