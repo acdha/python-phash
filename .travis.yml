@@ -18,5 +18,5 @@ install:
 
 script:
     - python setup.py test
-    - git diff --name-only $TRAVIS_COMMIT_RANGE | xargs pre-commit run --files
+    - 'if [[ $TRAVIS_PYTHON_VERSION == "3.7" ]]; then git diff --name-only $TRAVIS_COMMIT_RANGE | xargs pre-commit run --files; fi'
     - safety check
