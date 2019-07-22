@@ -7,19 +7,25 @@ import sys
 from ctypes import byref, pointer
 from ctypes.util import find_library
 
-ALL = ['ph_dct_imagehash', 'ph_dct_videohash', 'ph_image_digest', 'image_digest', 'cross_correlation']
+ALL = [
+    "ph_dct_imagehash",
+    "ph_dct_videohash",
+    "ph_image_digest",
+    "image_digest",
+    "cross_correlation",
+]
 
 FS_ENCODING = sys.getfilesystemencoding()
 
-libphash_path = find_library('pHash')
+libphash_path = find_library("pHash")
 
 if not libphash_path:
-    raise ImportError('Cannot find libpHash!')
+    raise ImportError("Cannot find libpHash!")
 
 try:
     libphash = ctypes.cdll.LoadLibrary(libphash_path)
 except OSError as exc:
-    raise RuntimeError('Cannot load libpHash: %s' % exc)
+    raise RuntimeError("Cannot load libpHash: %s" % exc)
 
 
 class PHashError(Exception):
@@ -32,16 +38,16 @@ def _phash_errcheck(rc, func, args):
     """
 
     if rc == -1:
-        raise PHashError('%s %r returned %s' % (func, args, rc))
+        raise PHashError("%s %r returned %s" % (func, args, rc))
     else:
         return rc
 
 
 class Digest(ctypes.Structure):
     _fields_ = [
-        ('id', ctypes.c_char_p),
-        ('coeffs', ctypes.POINTER(ctypes.c_byte)),
-        ('size', ctypes.c_int),
+        ("id", ctypes.c_char_p),
+        ("coeffs", ctypes.POINTER(ctypes.c_byte)),
+        ("size", ctypes.c_int),
     ]
 
 
@@ -71,7 +77,14 @@ ph_dct_videohash.argtypes = [ctypes.c_char_p, ctypes.c_int]
 ph_image_digest = libphash.ph_image_digest
 ph_image_digest.err_check = _phash_errcheck
 ph_image_digest.restype = ctypes.c_int
-ph_image_digest.argtypes = [ctypes.c_char_p, ctypes.c_double, ctypes.c_double, DIGEST_P, ctypes.c_int]
+ph_image_digest.argtypes = [
+    ctypes.c_char_p,
+    ctypes.c_double,
+    ctypes.c_double,
+    DIGEST_P,
+    ctypes.c_int,
+]
+
 
 def dct_imagehash(filename):
     if isinstance(filename, bytes):
@@ -87,12 +100,15 @@ def dct_imagehash(filename):
     else:
         return None
 
+
 ph_hamming_distance = libphash.ph_hamming_distance
 ph_hamming_distance.restype = ctypes.c_int
 ph_hamming_distance.argtypes = [ctypes.c_ulonglong, ctypes.c_ulonglong]
 
+
 def hamming_distance(hash1, hash2):
     return ph_hamming_distance(hash1, hash2)
+
 
 def image_digest(filename, sigma=1.0, gamma=1.0, lines=180):
     """
@@ -109,6 +125,7 @@ def image_digest(filename, sigma=1.0, gamma=1.0, lines=180):
     ph_image_digest(filename_bytes, sigma, gamma, d, lines)
     return d
 
+
 # To compare two radial hashes, a peak of cross correlation is determined between two hashes:
 # The peak of cross correlation between the two vectors is returned in the pcc parameter.
 
@@ -116,7 +133,12 @@ def image_digest(filename, sigma=1.0, gamma=1.0, lines=180):
 ph_crosscorr = libphash.ph_crosscorr
 ph_crosscorr.restype = ctypes.c_int
 ph_crosscorr.err_check = _phash_errcheck
-ph_crosscorr.argtypes = [DIGEST_P, DIGEST_P, ctypes.POINTER(ctypes.c_double), ctypes.c_double]
+ph_crosscorr.argtypes = [
+    DIGEST_P,
+    DIGEST_P,
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.c_double,
+]
 
 
 def cross_correlation(digest_1, digest_2, threshold=0.90):

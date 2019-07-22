@@ -14,7 +14,6 @@ from phash import phash
 
 
 class TestPhash(unittest.TestCase):
-
     def setUp(self):
         pass
 
@@ -24,5 +23,6 @@ class TestPhash(unittest.TestCase):
     def tearDown(self):
         pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
