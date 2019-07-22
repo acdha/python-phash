@@ -1,16 +1,22 @@
-# Config file for automatic testing at travis-ci.org
+dist: xenial
 
 language: python
 
 python:
-  - "3.5"
-  - "3.4"
-  - "3.3"
-  - "2.7"
-  - "pypy"
+    - "3.7"
+    - "3.6"
+    - "3.5"
+    - "3.4"
+    - "3.3"
+    - "2.7"
+    - "pypy"
 
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -r requirements.txt
+install:
+    - pip install --upgrade pip
+    - pip install safety pre-commit
+    - pip install -r requirements.txt
 
-# command to run tests, e.g. python setup.py test
-script: python setup.py test
+script:
+    - python setup.py test
+    - git diff --name-only $TRAVIS_COMMIT_RANGE | xargs pre-commit run --files
+    - safety check
